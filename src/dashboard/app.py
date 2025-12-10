@@ -1,293 +1,191 @@
-# ========================================================================
-# Cloudburst Early Warning System — Streamlit Dashboard
-# Connected to FastAPI backend
-# ========================================================================
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import requests
-import pydeck as pdk
+import time
 import plotly.express as px
-from datetime import datetime, timedelta
+import plotly.graph_objects as go
 
-# ------------------------------------------------------------------------
-# CONFIG
-# ------------------------------------------------------------------------
+BACKEND_URL = "https://sih-final-h38a.onrender.com"   # <-- UPDATE with your actual URL
 
 st.set_page_config(
-    page_title="Cloudburst EWS Dashboard",
+    page_title="Cloudburst Early Warning System",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# CHANGE THIS ➜ If deployed, set API_BASE in Streamlit Secrets
-API_BASE = st.secrets.get("API_BASE", "http://127.0.0.1:8000")
+# -------------------------------
+# UI THEME
+# -------------------------------
+st.markdown("""
+<style>
+.big-title {
+    font-size: 38px !important;
+    font-weight: 900 !important;
+    color: #4fc3f7 !important;
+}
+.stage-box {
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+.stage-1 { background-color: #1e88e5; color: white; }
+.stage-2 { background-color: #fb8c00; color: white; }
+.stage-3 { background-color: #e53935; color: white; }
+.node-icon {
+    background-color: rgba(255,255,255,0.1);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-def api_get(path):
+# -------------------------------
+# Aerostat Animation
+# -------------------------------
+st.markdown("""
+<style>
+@keyframes floatUp {
+  0%   { transform: translateY(40px); }
+  100% { transform: translateY(-80px); }
+}
+.float-balloon {
+  animation: floatUp 6s ease-in-out infinite alternate;
+}
+</style>
+""", unsafe_allow_html=True)
+
+BALLOON_ICON = """
+<img src="https://i.imgur.com/ol9kdFM.png" width="180" class="float-balloon">
+"""
+
+DRONE_ICON = """
+<img src="https://i.imgur.com/jrE7aDn.png" width="160">
+"""
+
+
+# -------------------------------
+# Helper — Read Backend
+# -------------------------------
+def get_predictions():
     try:
-        r = requests.get(API_BASE + path, timeout=3)
-        if r.ok:
+        r = requests.get(f"{BACKEND_URL}/hardware-output")
+        if r.status_code == 200:
             return r.json()
+        return {}
     except:
-        return None
+        return {}
 
-def api_post(path, payload):
+def get_live_nodes():
     try:
-        r = requests.post(API_BASE + path, json=payload, timeout=3)
-        return r.ok
+        r = requests.get(f"{BACKEND_URL}/live-nodes")
+        if r.status_code == 200:
+            return pd.DataFrame(r.json())
+        return pd.DataFrame()
     except:
-        return False
+        return pd.DataFrame()
 
-# ------------------------------------------------------------------------
-# LOAD DATA FROM FASTAPI
-# ------------------------------------------------------------------------
 
-def load_live_latest():
-    rows = api_get("/api/live_latest")
-    if rows:
-        return pd.DataFrame(rows)
-    return pd.DataFrame()
-
-def load_predictions():
-    preds = api_get("/api/predictions")
-    if preds and isinstance(preds, list) and len(preds):
-        return preds[-1]
-    return []
-
-def load_stage_state():
-    return api_get("/api/stage_state") or {}
-
-def load_hw_output():
-    return api_get("/api/hardware_output") or {}
-
-# ------------------------------------------------------------------------
+# -------------------------------
 # HEADER
-# ------------------------------------------------------------------------
+# -------------------------------
+st.markdown("<div class='big-title'>⚡ Cloudburst Early Warning System — Dashboard</div>", unsafe_allow_html=True)
 
-st.title("🌩️ Cloudburst Early Warning System — Dashboard")
+col1, col2 = st.columns([2, 1])
 
-# ------------------------------------------------------------------------
-# SIDEBAR CONTROLS
-# ------------------------------------------------------------------------
-
-st.sidebar.header("Settings & Controls")
-
-auto_refresh = st.sidebar.checkbox("Enable Auto Refresh", value=False)
-refresh_interval = st.sidebar.slider("Refresh interval (seconds)", 3, 20, 6)
-
-st.sidebar.subheader("Manual Stage Override")
-sel_node = st.sidebar.selectbox("Select Node", ["node0","node1","node2","node3","node4"])
-sel_stage = st.sidebar.selectbox("Stage", [1,2,3])
-
-if st.sidebar.button("Apply Manual Override"):
-    api_post("/api/manual_stage", {sel_node: sel_stage})
-    st.sidebar.success(f"Manual override applied: {sel_node} → stage {sel_stage}")
-
-if st.sidebar.button("Clear Override"):
-    api_post("/api/manual_stage", {})
-    st.sidebar.success("Manual override cleared.")
-
-st.sidebar.markdown("---")
-
-# ------------------------------------------------------------------------
-# LOAD LIVE DATA
-# ------------------------------------------------------------------------
-
-live_df = load_live_latest()
-pred_block = load_predictions()
-hw_out = load_hw_output()
-stage_state = load_stage_state()
-
-# ------------------------------------------------------------------------
-# LAYOUT : LEFT (Map + Table + Charts) / RIGHT (Actions + Forecast)
-# ------------------------------------------------------------------------
-
-left, right = st.columns([2,1])
-
-# ------------------------------------------------------------------------
-# LEFT PANEL
-# ------------------------------------------------------------------------
-
-with left:
+# -------------------------------
+# COLUMN 1 — LIVE NODE TABLE + MAP
+# -------------------------------
+with col1:
     st.subheader("📡 Live Node Data")
+    df = get_live_nodes()
 
-    if live_df.empty:
-        st.warning("No live data yet. Start generator + predictor.")
+    if not df.empty:
+        st.dataframe(df, height=260)
     else:
-        st.write("Latest parameters (all nodes):")
-        st.dataframe(live_df, use_container_width=True)
+        st.warning("Waiting for data...")
 
-        # ----------------------
-        # INTERACTIVE MAP (PyDeck)
-        # ----------------------
-        st.subheader("🗺️ Node Map")
-
-        map_data = live_df.copy()
-        map_data["latitude"] = map_data["lat"]
-        map_data["longitude"] = map_data["lon"]
-
-        # circle radius scaled by risk
-        def risk_radius(node):
-            for p in pred_block:
-                if p["node_id"] == node:
-                    return 800 + p["risk_score"] * 20
-            return 800
-
-        map_data["radius"] = [risk_radius(n) for n in map_data["node_id"]]
-
-        layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=map_data,
-            get_position=["longitude", "latitude"],
-            get_radius="radius",
-            get_color=[0, 200, 0, 160],
-            pickable=True
-        )
-
-        view_state = pdk.ViewState(
-            latitude=map_data["latitude"].mean(),
-            longitude=map_data["longitude"].mean(),
+    # ---------------- Map ---------------
+    if not df.empty:
+        fig = px.scatter_mapbox(
+            df,
+            lat="lat",
+            lon="lon",
+            color="stage",
+            size=[18]*len(df),
+            hover_name="node_id",
             zoom=11,
-            pitch=20
+            color_continuous_scale=["blue", "yellow", "red"]
         )
+        fig.update_layout(
+            mapbox_style="carto-darkmatter",
+            height=430,
+            margin=dict(l=0, r=0, t=0, b=0)
+        )
+        st.subheader("🗺️ Live Node Location Map")
+        st.plotly_chart(fig, use_container_width=True)
 
-        st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state))
+# -------------------------------
+# COLUMN 2 — STAGE INDICATORS + AEROSTAT CONTROL
+# -------------------------------
+with col2:
+    st.subheader("🚨 System Status")
 
-        # ----------------------
-        # TIMELINE CHARTS
-        # ----------------------
-        st.subheader("📈 Timeline Signals")
+    predictions = get_predictions()
 
-        df_all = api_get("/api/live_latest")
-        if df_all:
-            df_chart = load_live_latest()  # only latest timestamp
-            # Instead: load full live.csv for big charts
-            try:
-                full = requests.get(API_BASE + "/api/live_latest").json()
-            except:
-                full = df_chart.to_dict(orient="records")
+    if predictions:
+        for node, info in predictions.items():
+            stage = info["stage"]
+            risk = info["risk"]
+            alert = info["alert"]
 
-        node_sel = st.selectbox("Select node for time-series:", ["node0","node1","node2","node3","node4"])
+            stage_class = "stage-1" if stage == 1 else "stage-2" if stage == 2 else "stage-3"
 
-        try:
-            big_df = pd.read_csv(str(Path(API_BASE.replace("http://127.0.0.1:8000","")).joinpath("data/live.csv")))
-        except:
-            big_df = pd.DataFrame()
+            st.markdown(
+                f"""
+                <div class="stage-box {stage_class}">
+                    {node.upper()} — Stage {stage} | Risk: {risk} | {alert}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        if not big_df.empty:
-            df_node = big_df[big_df["node_id"] == node_sel].tail(300)
-            if "timestamp" in df_node:
-                df_node["ts_dt"] = pd.to_datetime(df_node["timestamp"])
-                fig = px.line(
-                    df_node,
-                    x="ts_dt",
-                    y=["cloud_env_radar_dbz","pressure","humidity"],
-                    title=f"Signal History — {node_sel}"
-                )
-                st.plotly_chart(fig, use_container_width=True)
+    # Aerostat section
+    st.subheader("🎈 Aerostat Status")
+    st.markdown(BALLOON_ICON, unsafe_allow_html=True)
 
-# ------------------------------------------------------------------------
-# RIGHT PANEL
-# ------------------------------------------------------------------------
+    st.info("Aerostat will launch automatically in Stage 2.")
 
-with right:
-    st.subheader("🔧 Node Status & Alerts")
+    # Drone section
+    st.subheader("🛸 Drone Status")
+    st.markdown(DRONE_ICON, unsafe_allow_html=True)
 
-    for n in ["node0","node1","node2","node3","node4"]:
-        stage = stage_state.get(n, 1)
-        alert = hw_out.get(n, {}).get("alert", "NORMAL")
+# -------------------------------
+# TIMELINE CHARTS
+# -------------------------------
+st.subheader("📈 Node Signal History")
 
-        if alert == "HIGH_RISK":
-            st.error(f"{n} → Stage {stage} | ALERT: HIGH RISK")
-        elif alert == "WARNING":
-            st.warning(f"{n} → Stage {stage} | WARNING")
-        else:
-            st.success(f"{n} → Stage {stage} | NORMAL")
+node_selected = st.selectbox("Choose node", ["node0", "node1", "node2", "node3", "node4"])
 
-    st.markdown("---")
-    st.subheader("🎈 Aerostat & Drone Simulator")
+if not df.empty:
+    df_node = df[df["node_id"] == node_selected]
 
-    sim_node = st.selectbox("Node for simulation:", ["node0","node1","node2","node3","node4"])
-    sim_stage = stage_state.get(sim_node, 1)
-
-    # session-state for deployments
-    if "aero" not in st.session_state:
-        st.session_state.aero = {n: False for n in ["node0","node1","node2","node3","node4"]}
-    if "drone" not in st.session_state:
-        st.session_state.drone = {n: False for n in ["node0","node1","node2","node3","node4"]}
-
-    # -----------------------
-    # Aerostat Button
-    # -----------------------
-    if sim_stage >= 2 and not st.session_state.aero[sim_node]:
-        if st.button("Deploy Aerostat"):
-            with st.spinner("Launching aerostat..."):
-                for i in range(100):
-                    time.sleep(0.01)
-            st.session_state.aero[sim_node] = True
-            st.success("Aerostat deployed! Sensors activated.")
-    elif st.session_state.aero[sim_node]:
-        st.info("Aerostat currently deployed.")
-        if st.button("Retract Aerostat"):
-            st.session_state.aero[sim_node] = False
-            st.success("Aerostat retracted.")
-
-    # -----------------------
-    # Drone Button
-    # -----------------------
-    if sim_stage >= 3 and not st.session_state.drone[sim_node]:
-        if st.button("Launch Drone Probe"):
-            with st.spinner("Launching drone..."):
-                for i in range(100):
-                    time.sleep(0.01)
-            st.session_state.drone[sim_node] = True
-            st.success("Drone probe active!")
-    elif st.session_state.drone[sim_node]:
-        st.info("Drone probe already launched.")
-        if st.button("Recall Drone"):
-            st.session_state.drone[sim_node] = False
-            st.success("Drone recalled.")
-
-    # --------------------------------------------------------------------
-    # 2-HOUR FORECAST (if Aerostat deployed)
-    # --------------------------------------------------------------------
-
-    st.markdown("---")
-    st.subheader("⏳ 2-Hour Cloudburst Risk Forecast")
-
-    if st.session_state.aero[sim_node]:
-        st.info("Aerostat sensors active → forecasting enabled.")
-
-        preds = pred_block
-        if preds:
-            for p in preds:
-                if p["node_id"] == sim_node:
-                    base_risk = p["risk_score"]
-
-            # simple forecast stub
-            times = []
-            risks = []
-            for i in range(8):
-                times.append((datetime.now() + timedelta(minutes=15*(i+1))).strftime("%H:%M"))
-                risks.append(min(100, base_risk + i*4 + np.random.normal(0,2)))
-
-            fig2 = px.line(x=times, y=risks, labels={"x":"Time", "y":"Risk (%)"}, title="Forecasted Risk (2 hours)")
-            st.plotly_chart(fig2, use_container_width=True)
-
-            # burst estimate
-            for i, r in enumerate(risks):
-                if r >= 70:
-                    st.error(f"⚠️ Cloudburst likely in ~{(i+1)*15} minutes.")
-                    break
-            else:
-                st.success("No cloudburst expected in next 2 hours.")
+    if not df_node.empty:
+        for col in ["pressure", "humidity", "cloud_env_radar_dbz", "pressure_drop_5"]:
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=df_node.index, y=df_node[col], mode="lines", name=col))
+            fig.update_layout(title=f"{col} over time", height=300)
+            st.plotly_chart(fig, use_container_width=True)
     else:
-        st.warning("Deploy Aerostat for advanced forecasting.")
+        st.warning("No data yet.")
 
-# ------------------------------------------------------------------------
-# AUTO REFRESH
-# ------------------------------------------------------------------------
-
-if auto_refresh:
-    st.write(f"<meta http-equiv='refresh' content='{refresh_interval}'>", unsafe_allow_html=True)
+# Auto-refresh (every 3 seconds)
+st.markdown("""
+<script>
+setTimeout(function(){window.location.reload();}, 3000);
+</script>
+""", unsafe_allow_html=True)
