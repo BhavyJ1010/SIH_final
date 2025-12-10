@@ -1,27 +1,27 @@
 {
   "node0": {
     "stage": 1,
-    "risk": 14.812,
+    "risk": 14.892,
     "alert": "NORMAL"
   },
   "node1": {
     "stage": 1,
-    "risk": 16.732,
+    "risk": 12.268,
     "alert": "NORMAL"
   },
   "node2": {
     "stage": 1,
-    "risk": 13.74,
+    "risk": 13.47,
     "alert": "NORMAL"
   },
   "node3": {
     "stage": 1,
-    "risk": 12.498,
+    "risk": 11.263,
     "alert": "NORMAL"
   },
   "node4": {
     "stage": 1,
-    "risk": 13.913,
+    "risk": 15.726,
     "alert": "NORMAL"
   }
 }
