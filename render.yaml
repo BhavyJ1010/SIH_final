@@ -1,8 +1,9 @@
 ﻿services:
   - type: web
-    name: SIH_final_backend
+    name: cloudburst-backend
     env: python
+    region: oregon
     plan: free
-    rootDir: src/api
-    buildCommand: pip install -r ../../requirements.txt
-    startCommand: uvicorn app:app --host 0.0.0.0 --port \
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.api.app:app --host 0.0.0.0 --port 8000"
+    rootDir: .
