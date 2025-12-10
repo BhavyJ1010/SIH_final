@@ -1,0 +1,372 @@
+[
+  [
+    {
+      "timestamp": "2025-12-10 08:28:56",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.476,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:28:56",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 13.954,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:28:56",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 16.382,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:28:56",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 17.027,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:28:56",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 14.22,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:29:25",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.581,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:25",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 16.763,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:25",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 14.026,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:25",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 15.592,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:25",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 13.812,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:29:55",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.476,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:55",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 15.121,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:55",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 14.499,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:55",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 14.554,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:29:55",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 13.591,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:30:24",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 15.202,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:24",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 13.876,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:24",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 15.322,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:24",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 15.969,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:24",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 15.161,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:30:56",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 13.98,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:56",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 13.783,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:56",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 12.639,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:56",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 15.658,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:30:56",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 12.948,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:31:25",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.778,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:25",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 14.728,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:25",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 12.947,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:25",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 14.268,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:25",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 14.045,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:31:55",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 15.248,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:55",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 16.941,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:55",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 14.423,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:55",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 13.281,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:31:55",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 15.671,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:32:26",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.025,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:26",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 15.304,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:26",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 11.579,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:26",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 14.688,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:26",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 15.577,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:32:56",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 15.575,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:56",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 15.275,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:56",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 13.261,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:56",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 14.786,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:32:56",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 12.998,
+      "risk_level": "LOW"
+    }
+  ],
+  [
+    {
+      "timestamp": "2025-12-10 08:33:25",
+      "node_id": "node0",
+      "stage_used": 1,
+      "risk_score": 14.812,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:33:25",
+      "node_id": "node1",
+      "stage_used": 1,
+      "risk_score": 16.732,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:33:25",
+      "node_id": "node2",
+      "stage_used": 1,
+      "risk_score": 13.74,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:33:25",
+      "node_id": "node3",
+      "stage_used": 1,
+      "risk_score": 12.498,
+      "risk_level": "LOW"
+    },
+    {
+      "timestamp": "2025-12-10 08:33:25",
+      "node_id": "node4",
+      "stage_used": 1,
+      "risk_score": 13.913,
+      "risk_level": "LOW"
+    }
+  ]
+]
